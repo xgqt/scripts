@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+
+# Source this to enter the Eprefix environment
+# Like this for example:
+# $ source $HOME/gentoo/eprefix-activate
+
+
+# >>> Set eprefix
+
+EPREFIX=${EPREFIX:-${HOME}/gentoo}
+export EPREFIX
+
+
+# >>> Funcion definitions
+
+command_exists() {
+    if command -v "$1" >/dev/null
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if command_exists tput
+then
+    eprefix_good="$(tput bold)$(tput setaf 2)*$(tput sgr0)"
+    eprefix_bad="$(tput bold)$(tput setaf 1)*$(tput sgr0)"
+    eprefix_warn="$(tput bold)$(tput setaf 3)*$(tput sgr0)"
+else
+    eprefix_good="*"
+    eprefix_bad="*"
+    eprefix_warn="*"
+fi
+
+eprefix_addpath() {
+    if [ -d "${1}" ]
+    then
+        PATH=${1}:${PATH}
+        export PATH
+    else
+        echo "${eprefix_warn} ${1} not found"
+    fi
+}
+
+eprefix_addman() {
+    if [ -d "${1}" ]
+    then
+        MANPATH=${1}:${MANPATH}
+        export MANPATH
+    else
+        echo "${eprefix_warn} ${1} not found"
+    fi
+}
+
+eprefix_packages() {
+    if [ -d "${EPREFIX}/var/db/pkg" ]
+    then
+        find "${EPREFIX}"/var/db/pkg/*/* -type d | wc -l
+    fi
+}
+
+eprefix_world() {
+    if [ -f "${EPREFIX}/var/lib/portage/world" ]
+    then
+        wc -l < "${EPREFIX}/var/lib/portage/world"
+    fi
+}
+
+
+# >>> Checks
+
+# Exit if eprefix does not exist
+if [ ! -d "${EPREFIX}" ]
+then
+    echo "${eprefix_bad} No ${EPREFIX} found!"
+    echo ">>> Exiting..."
+    sleep 3
+    exit 1
+fi
+
+
+# >>> PATH setup
+
+# Add directories to PATH
+eprefix_addpath "${EPREFIX}/bin"
+eprefix_addpath "${EPREFIX}/opt/bin"
+eprefix_addpath "${EPREFIX}/sbin"
+eprefix_addpath "${EPREFIX}/tmp/bin"
+eprefix_addpath "${EPREFIX}/tmp/usr/bin"
+eprefix_addpath "${EPREFIX}/usr/bin"
+eprefix_addpath "${EPREFIX}/usr/local/bin"
+eprefix_addpath "${EPREFIX}/usr/local/sbin"
+eprefix_addpath "${EPREFIX}/usr/sbin"
+
+# Add manpages
+eprefix_addman "${EPREFIX}/usr/local/share/man"
+eprefix_addman "${EPREFIX}/usr/share/binutils-data/x86_64-pc-linux-gnu/2.34/man"
+eprefix_addman "${EPREFIX}/usr/share/man"
+
+
+# >>> General env setup
+
+# Process .sh files
+for sh in "${EPREFIX}"/etc/profile.d/*.sh
+do
+	[ -r "$sh" ] && . "$sh"
+done
+unset sh
+
+# Set Portage shell
+CONFIG_SHELL="${EPREFIX}/bin/bash"
+export CONFIG_SHELL
+
+# Misc env vars
+CONFIG_PROTECT_MASK="${CONFIG_PROTECT_MASK} ${EPREFIX}/etc/sandbox.d ${EPREFIX}/etc/gentoo-release ${EPREFIX}/etc/terminfo ${EPREFIX}/etc/ca-certificates.conf"
+GCC_SPECS=""
+LANG="en_US.utf8"
+export CONFIG_PROTECT_MASK
+export GCC_SPECS
+export LANG
+
+# Set umask
+umask 022
+
+
+# >>> Use Eprefix's tools
+
+# We just use "which" because we put Eprefix's PATHs first
+# before the system ones
+EDITOR="$(command -v nano)"
+PAGER="$(command -v less)"
+export EDITOR
+export PAGER
+
+
+# >>> Emerge options
+
+# Sandbox does not work well on Prefix
+# Bug: 490246
+FEATURES="${FEATURES} -usersandbox -sandbox"
+export FEATURES
+
+
+# >>> Finish
+
+echo ""
+echo ">>> Sourced the eprefix script"
+echo ""
+echo "${eprefix_good} Prefix:    ${EPREFIX}"
+echo "${eprefix_good} Packages:  $(eprefix_packages)"
+echo "${eprefix_good} In World:  $(eprefix_world)"
+echo "${eprefix_good} Have fun!  ;-)"
+
+
+if command_exists emerge
+then
+    echo ""
+    echo ">>> Environment ready"
+else
+    echo ""
+    echo "${eprefix_bad} Could not locate emerge"
+    echo "${eprefix_bad} Environment may be broken"
+    echo ">>> Continuing anyway..."
+fi
+
+
+# >>> Cleanup
+unset eprefix_good
+unset eprefix_bad
+unset eprefix_warn
