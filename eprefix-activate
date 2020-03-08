@@ -143,11 +143,12 @@ FEATURES="${FEATURES} -usersandbox -sandbox"
 export FEATURES
 
 # Check if we are on a prefix profile
+echo ""
 if command_exists eselect
 then
     eprofile="$(eselect profile show)"
 
-    if [[ "${eprofile}"  == *prefix* ]]
+    if [[ "${eprofile}" == *prefix* ]]
     then
         echo "${eprefix_good} ${eprofile}"
     else
