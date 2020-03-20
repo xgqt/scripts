@@ -13,6 +13,12 @@ if ! git status >/dev/null; then
     exit 1
 fi
 
+
+# Variables needed for tools
+[ -z "${ARCH}" ] && export ARCH=x86_64
+[ -z "${ACCEPT_KEYWORDS}" ] && export ACCEPT_KEYWORDS='**'
+
+
 # Use pkgchek
 pkgcheck scan --commits
 
