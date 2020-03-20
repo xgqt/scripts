@@ -1,0 +1,31 @@
+#!/bin/sh
+
+
+# CI Ebuild commit tester
+# Run this in a overlay directory.
+# This script uses pkgcheck and repoman 
+# to check the latest commit for QA issues.
+
+
+# Check if we are in a git repo
+if ! git status >/dev/null; then
+    echo Stop
+    exit 1
+fi
+
+# Use pkgchek
+pkgcheck scan --commits
+
+# Iterate through changed files in last commit
+# For each of these use dirname to change directory
+# to the one where the changed file resides
+# and run repoman in there
+for file in $(git diff --name-only HEAD HEAD~1)
+do
+    if cd $(dirname "${file}"); then
+        echo
+        echo "Directory $(pwd):"
+        repoman -Idix
+        cd - >/dev/null
+    fi
+done
