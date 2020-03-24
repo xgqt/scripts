@@ -28,10 +28,10 @@ pkgcheck scan --commits
 # and run repoman in there
 for file in $(git diff --name-only HEAD HEAD~1)
 do
-    if cd $(dirname "${file}"); then
+    if cd "$(dirname "${file}")"; then
         echo
         echo "Directory $(pwd):"
         repoman -Idix
-        cd - >/dev/null
+        cd - >/dev/null || return
     fi
 done
