@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 
 # CI Ebuild commit tester
@@ -19,8 +19,12 @@ fi
 [ -z "${ACCEPT_KEYWORDS}" ] && export ACCEPT_KEYWORDS='**'
 
 
+test_success=true
+
+
 # Use pkgchek
-pkgcheck scan --commits
+pkgcheck scan --commits || test_success=false
+
 
 # Iterate through changed files in last commit
 # For each of these use dirname to change directory
@@ -28,10 +32,16 @@ pkgcheck scan --commits
 # and run repoman in there
 for file in $(git diff --name-only HEAD HEAD~1)
 do
-    if cd "$(dirname "${file}")"; then
+    commit_dir="$(dirname "${file}")"
+    [[ "${commit_dir}" = *files ]] && continue
+    [[ "${commit_dir}" = *eclass ]] && continue
+    if cd "${commit_dir}"; then
         echo
         echo "Directory $(pwd):"
-        repoman -Idix
+        repoman -Idix || test_success=false
         cd - >/dev/null || return
     fi
 done
+
+# If any of the QA tools fail the test will fail
+[ ${test_success} = false ] && ( echo "Exiting with failure due to previous errors..."; exit 1 )
