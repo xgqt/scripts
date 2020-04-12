@@ -105,8 +105,8 @@ eprefix_addman "${EPREFIX}/usr/share/man"
 # Process .sh files
 for sh in "${EPREFIX}"/etc/profile.d/*.sh
 do
-    # shellcheck source="${EPREFIX}"/etc/profile.d/*.sh
-	[ -r "$sh" ] && . "$sh"
+    # shellcheck disable=SC1090 disable=SC1091
+    [ -r "${sh}" ] && source "${sh}"
 done
 unset sh
 
