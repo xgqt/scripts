@@ -21,17 +21,19 @@ fi
 
 # First test for a whole repo
 # This will likely exit firh error, because repoman
-# has to download some files ( metadata.xsd)
+# has to download some files (metadata.xsd)
 # We do that so we can truthfully test the actual latest commit
+echo ">>> Starting full test"
 repoman -Idix
+pkgcheck scan
 
+
+echo ">>> Starting latest commit test"
 
 test_success=true
 
-
 # Use pkgchek
 pkgcheck scan --commits || test_success=false
-
 
 # Iterate through changed files in last commit
 # For each of these use dirname to change directory
@@ -51,4 +53,10 @@ do
 done
 
 # If any of the QA tools fail the test will fail
-[ ${test_success} = false ] && ( echo "Exiting with failure due to previous errors..."; exit 1 )
+if [ ${test_success} = false ]
+then
+    echo ">>> Exiting with failure due to previous errors..."
+    exit 1
+else
+    exit 0
+fi
