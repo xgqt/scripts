@@ -42,8 +42,11 @@ pkgcheck scan --commits || test_success=false
 for file in $(git diff --name-only HEAD HEAD~1)
 do
     commit_dir="$(dirname "${file}")"
-    [[ "${commit_dir}" = *files ]] && continue
     [[ "${commit_dir}" = *eclass ]] && continue
+    [[ "${commit_dir}" = *files ]] && continue
+    [[ "${commit_dir}" = *licenses* ]] && continue
+    [[ "${commit_dir}" = *metadata* ]] && continue
+    [[ "${commit_dir}" = *profiles ]] && continue
     if cd "${commit_dir}"; then
         echo
         echo "Directory $(pwd):"
