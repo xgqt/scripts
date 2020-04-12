@@ -19,6 +19,13 @@ fi
 [ -z "${ACCEPT_KEYWORDS}" ] && export ACCEPT_KEYWORDS='**'
 
 
+# First test for a whole repo
+# This will likely exit firh error, because repoman
+# has to download some files ( metadata.xsd)
+# We do that so we can truthfully test the actual latest commit
+repoman -Idix
+
+
 test_success=true
 
 
