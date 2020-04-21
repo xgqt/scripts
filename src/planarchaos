@@ -78,14 +78,17 @@ esac
 ov_pkgs="$(use_eix --only-names --in-overlay "${1}")"
 known_unique="$(use_eix --only-in-overlay "${1}")"
 
+nnuniq=0
+
 
 for pkg in ${ov_pkgs}
 do
     # check if pkg is not in known_unique (other overlys have it)
     if [ "${known_unique#*${pkg}}" = "${known_unique}" ]
     then
+        nnuniq=$((nnuniq + 1))
         echo
-        ok_msg "Package ${pkg}:"
+        ok_msg "Package ${nnuniq} ${pkg}:"
         use_eix --exact --force-color "${pkg}"
     fi
 done
