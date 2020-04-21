@@ -1,0 +1,91 @@
+#!/bin/sh
+
+
+# Use this script to check which pkgs in a overlay might
+# be redundant - are in overlays other than the tested one
+
+# Arguments:
+#     1 - overlay
+
+# depends (heavily) on eix (1)
+
+# Some eix options used here:
+#     --exact
+#     --force-color
+#     --in-overlay
+#     --only-in-overlay
+#     --only-names
+#     --remote
+#     --remote2
+
+
+trap 'exit 128' INT
+
+
+bold="$(tput bold)"
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+white="$(tput setaf 7)"
+reset="$(tput sgr0)"
+
+
+ok_msg() {
+   echo "${bold}${green}* ${white}${1}${reset}"
+}
+
+err_msg() {
+    echo "${bold}${red}* ${white}${1}${reset}"
+}
+
+usage() {
+    cat <<EOF
+Usage: planarchaos OVERLAY
+Show redundant pkgs
+
+Options:
+    -h  show help
+
+EOF
+}
+
+use_eix() {
+    EIX_LIMIT=0 eix --remote --remote2 "${@}"
+}
+
+
+if ! command -v eix >/dev/null
+then
+    err_msg "No eix!"
+    exit 1
+fi
+
+case "${1}" in
+    -h | --help )
+        usage
+        exit 0
+        ;;
+    -* )
+        usage
+        exit 1
+        ;;
+    "" )
+        usage
+        exit 1
+        ;;
+esac
+
+
+ov_pkgs="$(use_eix --only-names --in-overlay "${1}")"
+known_unique="$(use_eix --only-in-overlay "${1}")"
+
+
+for pkg in ${ov_pkgs}
+do
+    # check if pkg is not in known_unique (other overlys have it)
+    if [ "${known_unique#*${pkg}}" = "${known_unique}" ]
+    then
+        echo
+        ok_msg "Package ${pkg}:"
+        use_eix --exact --force-color "${pkg}"
+    fi
+done
