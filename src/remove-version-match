@@ -4,7 +4,7 @@
 # Developed for /etc/portage/package.accept_keywords, may or may not
 # not work onther files.
 #
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
 	echo "Must specify a file to modify..."
 	exit 1
 fi
