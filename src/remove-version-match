@@ -1,0 +1,13 @@
+#!/bin/sh
+# Author: xenhat <me@xenh.at>
+# Description: A script to remove explicit version match in portage configuration files.
+# Developed for /etc/portage/package.accept_keywords, may or may not
+# not work onther files.
+#
+if [ -z "$1" ]; then
+	echo "Must specify a file to modify..."
+	exit 1
+fi
+regex='^=?(\S+)(?:-[[:digit:]]+\S*)(\s)(\S+)$'
+sub='\1\2\3'
+perl -pe "s;$regex;$sub;gm" -i "${1}"
