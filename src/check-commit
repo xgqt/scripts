@@ -28,6 +28,12 @@ repoman -Idix
 pkgcheck scan
 
 
+# create "eclass"
+# apparently pkgcheck needs it
+# "pkgcheck scan: error: failed running git: fatal: eclass: no such path in the working tree."
+[ -d eclass ] || mkdir eclass
+
+
 echo ">>> Starting latest commit test"
 
 test_success=true
