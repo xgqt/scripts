@@ -9,7 +9,7 @@
 
 # Check if we are in a git repo
 if ! git status >/dev/null; then
-    echo Stop
+    echo "Stop"
     exit 1
 fi
 
@@ -17,6 +17,11 @@ fi
 # Variables needed for tools
 [ -z "${ARCH}" ] && export ARCH=x86_64
 [ -z "${ACCEPT_KEYWORDS}" ] && export ACCEPT_KEYWORDS='**'
+
+# create "eclass"
+# apparently pkgcheck needs it
+# "pkgcheck scan: error: failed running git: fatal: eclass: no such path in the working tree."
+[ -d eclass ] || mkdir eclass
 
 
 # First test for a whole repo
@@ -26,12 +31,6 @@ fi
 echo ">>> Starting full test"
 repoman -Idix
 pkgcheck scan
-
-
-# create "eclass"
-# apparently pkgcheck needs it
-# "pkgcheck scan: error: failed running git: fatal: eclass: no such path in the working tree."
-[ -d eclass ] || mkdir eclass
 
 
 echo ">>> Starting latest commit test"
@@ -48,12 +47,16 @@ pkgcheck scan --commits || test_success=false
 for file in $(git diff --name-only HEAD HEAD~1)
 do
     commit_dir="$(dirname "${file}")"
+
+    # skip these directories
     [[ "${commit_dir}" = *eclass ]] && continue
     [[ "${commit_dir}" = *files ]] && continue
     [[ "${commit_dir}" = *licenses* ]] && continue
     [[ "${commit_dir}" = *metadata* ]] && continue
     [[ "${commit_dir}" = *profiles ]] && continue
-    if cd "${commit_dir}"; then
+
+    if cd "${commit_dir}"
+    then
         echo
         echo "Directory $(pwd):"
         repoman -Idix || test_success=false
