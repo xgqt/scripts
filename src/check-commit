@@ -3,13 +3,13 @@
 
 # CI Ebuild commit tester
 # Run this in a overlay directory.
-# This script uses pkgcheck and repoman 
+# This script uses pkgcheck and repoman
 # to check the latest commit for QA issues.
 
 
 # Check if we are in a git repo
 if ! git status >/dev/null; then
-    echo "Stop"
+    echo "Not a git repo... exiting"
     exit 1
 fi
 
@@ -29,7 +29,9 @@ fi
 # has to download some files (metadata.xsd)
 # We do that so we can truthfully test the actual latest commit
 echo ">>> Starting full test"
+echo "Running repoman -Idix"
 repoman -Idix
+echo "Running pkgcheck scan"
 pkgcheck scan
 
 
@@ -38,6 +40,7 @@ echo ">>> Starting latest commit test"
 test_success=true
 
 # Use pkgchek
+echo "Running pkgcheck scan --commits"
 pkgcheck scan --commits || test_success=false
 
 # Iterate through changed files in last commit
@@ -59,6 +62,7 @@ do
     then
         echo
         echo "Directory $(pwd):"
+        echo "Running repoman -Idix"
         repoman -Idix || test_success=false
         cd - >/dev/null || return
     fi
