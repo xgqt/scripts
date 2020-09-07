@@ -1,10 +1,22 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 
 # CI Ebuild commit tester
 # Run this in a overlay directory.
 # This script uses repoman
 # to check the latest commit for QA issues.
+
+
+# skip these directories
+ignored_dirs="
+.
+.git
+eclass
+files
+licenses
+metadata
+profiles
+"
 
 
 # Variables needed for tools
@@ -23,6 +35,7 @@ repoman -Idix
 
 echo ">>> Starting latest commit test"
 
+# If any of the QA checks fail the test will fail
 test_success=true
 
 # Iterate through changed files in last commit
@@ -33,28 +46,31 @@ for file in $(git diff --name-only HEAD HEAD~1)
 do
     commit_dir="$(dirname "${file}")"
 
-    # skip these directories
-    [[ "${commit_dir}" = *eclass ]] && continue
-    [[ "${commit_dir}" = *files ]] && continue
-    [[ "${commit_dir}" = *licenses* ]] && continue
-    [[ "${commit_dir}" = *metadata* ]] && continue
-    [[ "${commit_dir}" = *profiles ]] && continue
+    for i_dir in ${ignored_dirs}
+    do
+        if [[ "${commit_dir}" = *"${i_dir}"* ]]
+        then
+            echo
+            echo "Ignoring ${commit_dir}"
+            continue 2
+        fi
+    done
 
     if cd "${commit_dir}"
     then
         echo
-        echo "Directory $(pwd):"
+        echo "Checking ${commit_dir}"
         echo "Running repoman -Idix"
         repoman -Idix || test_success=false
         cd - >/dev/null || return
     fi
 done
 
-# If any of the QA tools fail the test will fail
 if [ ${test_success} = false ]
 then
-    echo ">>> Exiting with failure due to previous errors..."
+    echo ">>> Exiting with failure due to previous errors"
     exit 1
 else
+    echo ">>> Exiting successfully"
     exit 0
 fi
