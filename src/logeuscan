@@ -1,0 +1,29 @@
+#!/bin/sh
+
+
+# Scan with euscan + log
+# Requires:
+#  - eix
+#  - euscan
+
+
+trap 'exit 128' INT
+export PATH
+
+
+if [ -z "${1}" ]
+then
+    echo "No overlay names given"
+    echo "Please give at least one overlay name as a commandline argument"
+    echo "Exiting"
+    exit 1
+fi
+
+for overlay in "${@}"
+do
+    for ebuild in $(EIX_LIMIT=0 eix --only-names --in-overlay "${overlay}")
+    do 
+        euscan --nocolor --quiet "${ebuild}" | tee -a "euscan-${overlay}.log"
+    done
+    echo ">>> Done scanning ${overlay}"
+done
