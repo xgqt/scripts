@@ -15,7 +15,7 @@ export EPREFIX
 # >>> Funcion definitions
 
 command_exists() {
-    if command -v "$1" >/dev/null
+    if command -v "${1}" >/dev/null
     then
         return 0
     else
@@ -71,11 +71,19 @@ eprefix_world() {
 
 # >>> Checks
 
+# Exit if script is not sourced
+if [[ "${0}" != *sh ]]
+then
+    echo "Don't run this script"
+    echo "Source it instead"
+    exit 1
+fi
+
 # Exit if eprefix does not exist
 if [ ! -d "${EPREFIX}" ]
 then
     echo "${eprefix_bad} No ${EPREFIX} found!"
-    echo ">>> Exiting..."
+    echo ">>> Exiting the shell"
     sleep 3
     exit 1
 fi
@@ -115,7 +123,10 @@ CONFIG_SHELL="${EPREFIX}/bin/bash"
 export CONFIG_SHELL
 
 # Misc env vars
-CONFIG_PROTECT_MASK="${CONFIG_PROTECT_MASK} ${EPREFIX}/etc/sandbox.d ${EPREFIX}/etc/gentoo-release ${EPREFIX}/etc/terminfo ${EPREFIX}/etc/ca-certificates.conf"
+CONFIG_PROTECT_MASK="${CONFIG_PROTECT_MASK} ${EPREFIX}/etc/ca-certificates.conf"
+CONFIG_PROTECT_MASK="${CONFIG_PROTECT_MASK} ${EPREFIX}/etc/gentoo-release"
+CONFIG_PROTECT_MASK="${CONFIG_PROTECT_MASK} ${EPREFIX}/etc/sandbox.d"
+CONFIG_PROTECT_MASK="${CONFIG_PROTECT_MASK} ${EPREFIX}/etc/terminfo"
 GCC_SPECS=""
 LANG="en_US.utf8"
 export CONFIG_PROTECT_MASK
