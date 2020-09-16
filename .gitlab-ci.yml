@@ -5,7 +5,7 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y bash shellcheck
+  - apt-get install -y bash pylint3 shellcheck
 
 test:
   stage: test
