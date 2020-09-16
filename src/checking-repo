@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+####################################################
+#
+# SRC_PREPARE
+#
+# Marcin Woźniak
+# y0rune@aol.com
+#
+# Last edit: 16-09-2020
+#
+###################################################
+
+function scanning(){
+    EUSCAN=$(euscan --nocolor --quiet "$1")
+    if [ -n "$EUSCAN" ]; then
+        echo "=============== NOW: $(find ./* -mindepth 2 -maxdepth 2  -name ''"$1"'*.ebuild' | tail -1) =================
+        $(echo -e "$EUSCAN" | tail -1)"
+    fi
+}
+
+function folder(){
+    cd "$1" || exit
+
+    PACKAGES=()
+
+    for FILE in */*
+    do
+        PACKAGE=$(echo "$FILE" | grep -Eo '[A-z0-9_-]+$')
+        PACKAGES+=("$PACKAGE")
+    done
+
+    for i in "${PACKAGES[@]}"
+    do
+        scanning "$i" &
+    done
+
+    for j in $(jobs -p)
+    do
+        wait "$j"
+    done
+
+    echo -n ">>> Done scanning $1"
+}
+
+function nofolder(){
+    if [ -z "${1}" ]; then
+        echo "No overlay names given"
+        echo "Please give at least one overlay name as a commandline argument"
+        echo "Exiting"
+        exit 1
+    fi
+
+for overlay in "${@}"
+do
+    for ebuild in $(EIX_LIMIT=0 eix --only-names --in-overlay "${overlay}")
+    do
+        euscan --nocolor --quiet "${ebuild}" &
+    done
+
+    for j in $(jobs -p)
+    do
+        wait "$j"
+    done
+
+    echo -n ">>> Done scanning ${overlay}"
+done
+}
+
+function help(){
+    echo "You can use:"
+    echo "*   -r or --repo <HERE-REPO-NAME>"
+    echo "*   -f or --folder <FOLDER-NAME>"
+    echo
+    echo "Example of usage"
+    echo "./logeuscan -r src_prepare-overlay"
+    echo "./logeuscan -f ~/git/src_prepare-overlay"
+}
+
+function main(){
+    [ "$(whereis eix | wc -w)" -le "1" ] && { echo "The eix is NOT installed"; exit; }
+    [ "$(whereis euscan | wc -w)" -le "1" ] && { echo "The euscan is NOT installed"; exit; }
+    case $1 in
+        -h|--help)
+            help
+            ;;
+        -r|--repo)
+            nofolder "$2" | tee -a "euscan-$(date -I).log"
+            ;;
+        -f|--folder)
+            folder "$2" | tee -a "euscan-$(date -I).log"
+            ;;
+        *)
+        echo "No found variable"; echo; help
+    esac
+}
+
+main "$@"
