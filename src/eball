@@ -1,0 +1,43 @@
+#!/bin/sh
+
+
+trap 'exit 128' INT
+export PATH
+
+
+usage() {
+    cat << HELP
+Usage: eball FILES
+eball - test new ebuilds
+
+Original author: XGQT
+Copyright (c) 2020, src_prepare group
+Licensed under the ISC License
+HELP
+}
+
+
+if [ -z "${1}" ]
+then
+    usage
+    exit 1
+elif [ "${1}" = "-h" ] || [ "${1}" = "--help" ]
+then
+    usage
+    exit 0
+fi
+
+for ebuild in "${@}"
+do
+    # one may want this to be unprivileged
+    repoman manifest || ebuild "${ebuild}" manifest
+
+    # we want this to be privileged on Gentoo systems
+    if [ "$(whoami)" != root ] && [ -z "${EPREFIX}" ]
+    then
+        echo "Switching to the root account"
+        sudo ebuild "${ebuild}" clean test merge
+    else
+        ebuild "${ebuild}" clean test merge
+    fi
+done
