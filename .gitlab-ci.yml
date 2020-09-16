@@ -6,6 +6,7 @@ stages:
 before_script:
   - apt-get update
   - apt-get install -y bash pylint3 shellcheck
+  - ln -fs $(which pylint3) /usr/bin/pylint
 
 test:
   stage: test
