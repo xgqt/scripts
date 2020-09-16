@@ -33,7 +33,12 @@ function folder(){
     do
         scanning "$i" &
     done
-    wait $(jobs -p)
+
+    for j in $(jobs -p)
+    do
+        wait "$j"
+    done
+
     echo -n ">>> Done scanning $1"
 }
 
@@ -51,7 +56,12 @@ do
     do
         euscan --nocolor --quiet "${ebuild}" &
     done
-    wait $(jobs -p)
+
+    for j in $(jobs -p)
+    do
+        wait "$j"
+    done
+
     echo -n ">>> Done scanning ${overlay}"
 done
 }
