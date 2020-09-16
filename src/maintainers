@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+
+import os
+import os.path
+import xml.etree.ElementTree as ET
+
+
+metadatas = [
+    os.path.join(dp, f)
+    for dp, _, filenames in os.walk(".")
+    for f in filenames if os.path.splitext(f)[1] == '.xml'
+]
+
+
+if __name__ == '__main__':
+    for metadata in metadatas:
+        try:
+            _, cat, pkg, _ = metadata.split("/")
+            print("Package: %s/%s" % (cat, pkg))
+            maints = []
+            with open(metadata) as m:
+                tree = ET.parse(m)
+                root = tree.getroot()
+                for item in root.findall('./maintainer'):
+                    for child in item:
+                        print(4 * " ", child.tag, ":", child.text)
+
+        except ValueError:
+            continue
