@@ -12,23 +12,27 @@
 ###################################################
 
 function scanning(){
-    EUSCAN=$(euscan --nocolor --quiet $1)
-    if [ ! -z "$EUSCAN" ]; then
-        echo -e "=============== NOW: $(ls */* | grep -i '.*'$1'.*\.ebuild' | tail -1) ================="
-        echo -e "$EUSCAN" | tail -1
+    EUSCAN=$(euscan --nocolor --quiet "$1")
+    if [ -n "$EUSCAN" ]; then
+        echo -e "=============== NOW: $(find ./* -mindepth 2 -maxdepth 2  -name ''"$1"'*.ebuild' | tail -1) =================\n $(echo -e "$EUSCAN" | tail -1)\n"
     fi
 }
 
 function folder(){
-    cd $1
+    cd "$1" || exit
 
-    PACKAGES=( $(ls */* | grep -i ":" | sed 's/://g' | awk -F '/' {'print $2'} | sort --unique) )
+    PACKAGES=()
 
-    for i in ${PACKAGES[@]}
+    for FILE in */*
     do
-        scanning $i &
+        PACKAGE=$(echo "$FILE" | grep -Eo '[A-z0-9_-]+$')
+        PACKAGES+=("$PACKAGE")
     done
 
+    for i in "${PACKAGES[@]}"
+    do
+        scanning "$i" &
+    done
     wait $(jobs -p)
     echo -n ">>> Done scanning $1"
 }
@@ -45,7 +49,7 @@ for overlay in "${@}"
 do
     for ebuild in $(EIX_LIMIT=0 eix --only-names --in-overlay "${overlay}")
     do
-        euscan --nocolor --quiet "${ebuild}" | tee -a "euscan-${overlay}.log" &
+        euscan --nocolor --quiet "${ebuild}" &
     done
     wait $(jobs -p)
     echo -n ">>> Done scanning ${overlay}"
@@ -63,21 +67,21 @@ function help(){
 }
 
 function main(){
-    [ $(whereis eix | wc -w) -le "1" ] && { echo "The eix is NOT installed"; exit; }
-    [ $(whereis euscan | wc -w) -le "1" ] && { echo "The euscan is NOT installed"; exit; }
+    [ "$(whereis eix | wc -w)" -le "1" ] && { echo "The eix is NOT installed"; exit; }
+    [ "$(whereis euscan | wc -w)" -le "1" ] && { echo "The euscan is NOT installed"; exit; }
     case $1 in
         -h|--help)
             help
             ;;
         -r|--repo)
-            nofolder $2
+            nofolder "$2"
             ;;
         -f|--folder)
-            folder $2
+            folder "$2"
             ;;
         *)
         echo "No found variable"; echo; help
     esac
 }
 
-main $@
+main "$@"
