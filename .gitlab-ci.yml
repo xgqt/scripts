@@ -1,8 +1,13 @@
-services:
-  - docker:dind
+image: debian:stable-slim
 
-shellcheck:
-  image: docker:latest
+stages:
+  - test
+
+before_script:
+  - apt-get update
+  - apt-get install -y bash shellcheck
+
+test:
   stage: test
   script:
-    - docker run --rm -v "$(pwd):/mnt" koalaman/shellcheck:stable src/*
+    - bash test.sh
