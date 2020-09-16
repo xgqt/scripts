@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ####################################################
 #
-# SRC_PREPERE
+# SRC_PREPARE
 #
 # Marcin Woźniak
 # y0rune@aol.com
