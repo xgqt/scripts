@@ -38,10 +38,9 @@ def pkg_name(pkg_str):
     proper = ""
 
     # Strip required use
-    for i in pkg_str:
-        if i in ["["]:
-            break
-        proper += i
+    for i in ["["]:
+        if i in pkg_str:
+            proper = pkg_str.split(i)[0]
 
     # Strip conditional use
     for i in ["$", "DEPEND", "||", "!", "?", "(", ")"]:
