@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+
+
+"""
+Install Ebuild Dependencies
+
+This script is strictly for working with ebuild files.
+In normal situaltion when we already have a repository (/var/db/repos/repo),
+to emerge dependencies we would just do "emerge --oneshot --onlydeps PKG".
+
+Original author: XGQT
+Copyright (c) 2020, src_prepare group
+Licensed under the ISC License
+"""
+
+
+import argparse
+from subprocess import call
+
+
+parser = argparse.ArgumentParser(
+    description="Install Ebuild Dependencies",
+    epilog="Copyright (c) 2020, src_prepare group (License: ISC)"
+)
+parser.add_argument(
+    "ebuild",
+    nargs="*",
+    type=str
+)
+args = parser.parse_args()
+
+
+def pkg_name(pkg_str):
+    """Parse string and return a pkg name"""
+
+    # TODO: don't strip but force
+
+    proper = ""
+
+    # Strip required use
+    for i in pkg_str:
+        if i in ["["]:
+            break
+        proper += i
+
+    # Strip conditional use
+    for i in ["$", "DEPEND", "||", "!", "?", "(", ")"]:
+        if i in proper:
+            proper = ""
+
+    return proper
+
+
+def ebuild_deps(ebuild_file):
+    """Returns dependencies from a ebuild file"""
+    deps = []
+    adddeps = False
+    with open(ebuild_file) as ebuild:
+        for line in ebuild.read().splitlines():
+            if adddeps:
+                # TODO: Find a better pkg match method
+                if "/" in line:
+                    deps.append(
+                        pkg_name(line.strip())
+                    )
+                elif "\"" in line:
+                    adddeps = False
+            # TODO: Find a better way to find the depend "block"
+            elif "DEPEND" in line:
+                adddeps = True
+    return deps
+
+
+def main():
+    """The main function"""
+    print("Ebuilds:", args.ebuild)
+
+    all_deps = []
+
+    for ebuild in args.ebuild:
+        all_deps += ebuild_deps(ebuild)
+
+    print("Dependencies:", all_deps)
+
+    # TODO: Maybe use Portage API
+    call(
+        [
+            "emerge",
+            "--autounmask",
+            "--noreplace",
+            "--oneshot"
+        ]
+        +
+        list(filter(None, all_deps))
+    )
+
+
+if __name__ == "__main__":
+    main()
