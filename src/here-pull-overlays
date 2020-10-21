@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+
+set -o pipefail
+trap 'exit 1' INT
+export PATH
+
+
+emsg()
+{
+    echo "$(tput bold)$(tput setaf 6)>>> $(tput setaf 4)$(date +%H:%M:%S)$(tput setaf 7) ${*} $(tput sgr0)"
+}
+edie()
+{
+    if [ -z "${1}" ]
+    then
+        emsg "$(tput setaf 1)Failed: last command"
+    else
+        emsg "$(tput setaf 1)Failed: ${*}"
+    fi
+    exit 1
+}
+erun()
+{
+    emsg "Running: ${*}"
+    "${@}" | busybox ts '>>> %H:%M:%S' || edie "${@}"
+}
+einto()
+{
+    pushd "${1}" >/dev/null || edie "Could not open ${1}"
+}
+eback()
+{
+    popd >/dev/null || edie
+}
+
+
+for repo in *
+do
+    if [ -f "${repo}"/metadata/layout.conf ]
+    then
+        emsg "Pulling: ${repo}"
+        einto "${repo}"
+        erun git pull --all --verbose
+        eback
+        erun chown -R "${USER}":portage "${repo}"
+    fi
+done
+
+erun eix-update
