@@ -8,6 +8,6 @@ export PATH
 git submodule update --init --recursive
 git submodule update --remote --merge
 git add .
-git commit -m "submodules update"
+git commit --signoff --message="submodules update"
 git pull --verbose
 git push --verbose
