@@ -1,0 +1,26 @@
+#!/bin/sh
+
+
+trap 'exit 128' INT
+set -e
+export PATH
+
+
+pdir="$(git rev-parse --show-prefix)"
+
+
+FEATURES="sign"
+export FEATURES
+
+
+git add .
+
+if [ -z "${1}" ]
+then
+    repoman commit
+else
+    repoman commit -m "${pdir%/}: ${*}"
+fi
+
+git pull --verbose
+git push --verbose

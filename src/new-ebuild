@@ -1,0 +1,56 @@
+#!/bin/sh
+
+
+# shellcheck disable=2016
+
+
+trap 'exit 128' INT
+export PATH
+
+
+ebuild_template='# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+DESCRIPTION=""
+HOMEPAGE=""
+
+if [[ "\${PV}" == *9999* ]]; then
+    inherit git-r3
+    EGIT_REPO_URI=""
+else
+    SRC_URI=""
+    KEYWORDS="~amd64"
+fi
+
+RESTRICT="
+    mirror
+    !test? ( test )
+"
+LICENSE=""
+SLOT="0"
+IUSE="test"
+
+BDEPEND=""
+DEPEND=""
+RDEPEND=""'
+
+metadata_template='<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+</pkgmetadata>'
+
+
+if [ -f ../../profiles/repo_name ]
+then
+    echo "${ebuild_template}" >> "$(basename "$(pwd)")-9999.ebuild"
+    echo "${metadata_template}" >> "metadata.xml"
+else
+    echo "Are you in a overlay repo?"
+    echo "To use this script successfully:"
+    echo "- create a \${CATEGOTY}/\${PN} directory"
+    echo "- cd into it"
+    echo "- execute ${0}"
+    exit 1
+fi
