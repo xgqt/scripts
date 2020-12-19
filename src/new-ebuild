@@ -49,8 +49,8 @@ then
 else
     echo "Are you in a overlay repo?"
     echo "To use this script successfully:"
-    echo "- create a \${CATEGOTY}/\${PN} directory"
-    echo "- cd into it"
-    echo "- execute ${0}"
+    echo "1. Create a \${CATEGOTY}/\${PN} directory"
+    echo "2. Change directory to it"
+    echo "3. Execute ${0}"
     exit 1
 fi
