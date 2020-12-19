@@ -8,16 +8,17 @@
 
 
 # skip these directories
-ignored_dirs="
-.
-.git
-eclass
-files
-licenses
-metadata
-profiles
-scripts
-"
+ignored_dirs=(
+    .
+    .git
+    eclass
+    files
+    licenses
+    metadata
+    profiles
+    scripts
+    3rd_party
+)
 
 
 # Variables needed for tools
@@ -47,7 +48,7 @@ for file in $(git diff --name-only HEAD HEAD~1)
 do
     commit_dir="$(dirname "${file}")"
 
-    for i_dir in ${ignored_dirs}
+    for i_dir in "${ignored_dirs[@]}"
     do
         if [[ "${commit_dir}" = *"${i_dir}"* ]]
         then
@@ -62,12 +63,12 @@ do
         echo
         echo "Checking ${commit_dir}"
         echo "Running repoman -Idix"
-        repoman -Idix || test_success=false
+        repoman -Idix || test_success="false"
         cd - >/dev/null || return
     fi
 done
 
-if [ ${test_success} = false ]
+if [ "${test_success}" = "false" ]
 then
     echo ">>> Exiting with failure due to previous errors"
     exit 1
