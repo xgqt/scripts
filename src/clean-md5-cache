@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+# Clean md5-cache from the overlay directory
+
+
+trap 'exit 128' INT
+export PATH
+
+
+cache="$(git rev-parse --show-cdup)metadata/md5-cache"
+
+
+if [ -d "${cache}" ]
+then
+    if ! rm -fr "${cache}"
+    then
+        sudo rm -fr "${cache}" || exit 1
+    fi
+else
+    echo "No pre-generated md5-cache found in ${cache}"
+fi
