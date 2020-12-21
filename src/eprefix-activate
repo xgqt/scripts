@@ -72,12 +72,17 @@ eprefix_world() {
 # >>> Checks
 
 # Exit if script is not sourced
-if [[ "${0}" != *sh ]]
-then
-    echo "Don't run this script"
-    echo "Source it instead"
-    exit 1
-fi
+case ${-} in
+    *i* )
+        :
+        ;;
+    * )
+        echo "${eprefix_bad} Error: not a login shell"
+        echo "${eprefix_bad} Run: source ${0}"
+        echo ">>> Exiting the shell"
+        exit 1
+        ;;
+esac
 
 # Exit if eprefix does not exist
 if [ ! -d "${EPREFIX}" ]
