@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 
 
+# Original author: XGQT
+# Licensed under the ISC License
+# Copyright (c) 2020, src_prepare group
+
+
 set -o pipefail
-trap 'exit 1' INT
+trap 'exit 128' INT
 export PATH
 
 
-emsg()
-{
+emsg() {
     echo "$(tput bold)$(tput setaf 6)>>> $(tput setaf 4)$(date +%H:%M:%S)$(tput setaf 7) ${*} $(tput sgr0)"
 }
-edie()
-{
+
+edie() {
     if [ -z "${1}" ]
     then
         emsg "$(tput setaf 1)Failed: last command"
@@ -20,17 +24,16 @@ edie()
     fi
     exit 1
 }
-erun()
-{
+erun() {
     emsg "Running: ${*}"
     "${@}" | busybox ts '>>> %H:%M:%S' || edie "${@}"
 }
-einto()
-{
+
+einto() {
     pushd "${1}" >/dev/null || edie "Could not open ${1}"
 }
-eback()
-{
+
+eback() {
     popd >/dev/null || edie
 }
 
