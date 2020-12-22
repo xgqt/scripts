@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 
+# Original author: XGQT
+# Licensed under the ISC License
+# Copyright (c) 2020, src_prepare group
+
+
 # CI Ebuild commit tester
 # Run this in a overlay directory.
 # This script uses pkgcheck and repoman

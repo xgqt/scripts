@@ -1,13 +1,20 @@
 #!/bin/sh
 
 
+# Original author: XGQT
+# Licensed under the ISC License
+# Copyright (c) 2020, src_prepare group
+
+
 trap 'exit 128' INT
 export PATH
 
 
 git submodule update --init --recursive
+
 git submodule update --remote --merge
 git add .
+
 git commit --signoff --message="submodules update"
 git pull --verbose
 git push --verbose

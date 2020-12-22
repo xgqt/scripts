@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 
+# Original author: XGQT
+# Licensed under the ISC License
+# Copyright (c) 2020, src_prepare group
+
 # Source this to enter the Eprefix environment
 # Like this for example:
 # $ source $HOME/gentoo/eprefix-activate

@@ -1,6 +1,11 @@
 #!/bin/sh
 
 
+# Original author: XGQT
+# Licensed under the ISC License
+# Copyright (c) 2020, src_prepare group
+
+
 trap 'exit 128' INT
 
 
