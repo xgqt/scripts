@@ -1,0 +1,30 @@
+#!/bin/sh
+
+
+trap 'exit 128' INT
+export PATH
+
+
+main() {
+    [ -f Manifest ] && rm -v Manifest
+    repoman --verbose manifest
+
+    repoman --verbose -Idx full
+    pkgcheckq --verbose scan
+}
+
+
+case ${1}
+in
+    -h | -help | --help )
+        echo "Usage: ${0}"
+        echo "Performed in this script:"
+        echo "1. remove Manifest file"
+        echo "2. regen Manifest with 'repoman manifest'"
+        echo "3. Check with 'repoman -Idx full'"
+        echo "4. Check with 'pkgcheck scan'"
+        ;;
+    * )
+        main
+        ;;
+esac
