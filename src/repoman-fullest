@@ -15,7 +15,7 @@ main() {
     repoman --verbose manifest
 
     repoman --verbose -Idx full
-    pkgcheckq --verbose scan
+    pkgcheck --verbose scan
 }
 
 
