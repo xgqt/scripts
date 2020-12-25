@@ -42,10 +42,26 @@ metadata_template='<?xml version="1.0" encoding="UTF-8"?>
 </pkgmetadata>'
 
 
+main() {
+    ebuild="$(basename "$(pwd)")-9999.ebuild"
+    if [ ! -f "${ebuild}" ]
+    then
+        echo "${ebuild_template}" > "${ebuild}"
+    else
+        echo "Already exists: ${ebuild}"
+    fi
+    if [ ! -f "metadata.xml" ]
+    then
+        echo "${metadata_template}" > "metadata.xml"
+    else
+        echo "Already exists: metadata.xml"
+    fi
+}
+
+
 if [ -f ../../profiles/repo_name ]
 then
-    echo "${ebuild_template}" >> "$(basename "$(pwd)")-9999.ebuild"
-    echo "${metadata_template}" >> "metadata.xml"
+    main
 else
     echo "Are you in a overlay repo?"
     echo "To use this script successfully:"
