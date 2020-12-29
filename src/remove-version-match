@@ -1,9 +1,29 @@
 #!/bin/sh
-# Author: xenhat <me@xenh.at>
+
+# This file is part of scripts.
+
+# scripts is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# scripts is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with scripts.  If not, see <https://www.gnu.org/licenses/>.
+
+# Original author: xenhat (me@xenh.at)
+# Copyright (c) 2020, src_prepare group
+# Licensed under the GNU GPL v3 License
+
 # Description: A script to remove explicit version match in portage configuration files.
 # Developed for /etc/portage/package.accept_keywords, may or may not
 # not work onther files.
-#
+
+
 if [ -z "$1" ]; then
 	echo "Must specify a file to modify..."
 	exit 1
