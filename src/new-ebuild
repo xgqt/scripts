@@ -36,16 +36,16 @@ DESCRIPTION=""
 HOMEPAGE=""
 
 if [[ "${PV}" == *9999* ]]; then
-    inherit git-r3
-    EGIT_REPO_URI=""
+	inherit git-r3
+	EGIT_REPO_URI=""
 else
-    SRC_URI=""
-    KEYWORDS="~amd64"
+	SRC_URI=""
+	KEYWORDS="~amd64"
 fi
 
 RESTRICT="
-    mirror
-    !test? ( test )
+	mirror
+	!test? ( test )
 "
 LICENSE=""
 SLOT="0"
@@ -58,16 +58,16 @@ RDEPEND=""'
 metadata_template="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE pkgmetadata SYSTEM \"http://www.gentoo.org/dtd/metadata.dtd\">
 <pkgmetadata>
-    <maintainer type=\"person\">
-        <email>$(git config --get user.email)</email>
-        <name>$(git config --get user.name)</name>
-    </maintainer>
-    <longdescription lang=\"en\">
-        CHANGEME
-    </longdescription>
-    <upstream>
-        <remote-id type=\"CHANGEME\">CHANGEME</remote-id>
-    </upstream>
+	<maintainer type=\"person\">
+		<email>$(git config --get user.email)</email>
+		<name>$(git config --get user.name)</name>
+	</maintainer>
+	<longdescription lang=\"en\">
+		CHANGEME
+	</longdescription>
+	<upstream>
+		<remote-id type=\"CHANGEME\">CHANGEME</remote-id>
+	</upstream>
 </pkgmetadata>"
 
 
