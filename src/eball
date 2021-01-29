@@ -56,7 +56,7 @@ do
     if [ "$(whoami)" != root ] && [ -z "${EPREFIX}" ]
     then
         echo "Switching to the root account"
-        sudo ebuild "${ebuild}" clean test merge
+        su root -c "ebuild ${ebuild} clean test merge"
     else
         ebuild "${ebuild}" clean test merge
     fi
