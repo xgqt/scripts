@@ -1,18 +1,31 @@
 #!/bin/sh
 
 
-# Original author: XGQT
-# Licensed under the ISC License
-# Copyright (c) 2020, src_prepare group
+# This file is part of scripts.
+
+# scripts is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# scripts is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with scripts.  If not, see <https://www.gnu.org/licenses/>.
+
+# Original author: Maciej Barć <xgqt@protonmail.com>
+# Copyright (c) 2020-2021, src_prepare group
+# Licensed under the GNU GPL v3 License
 
 # Use this script to check which pkgs in a overlay might
 # be redundant - are in overlays other than the tested one
-
 # Arguments:
 #     1 - overlay
 
 # depends (heavily) on eix (1)
-
 # Some eix options used here:
 #     --exact
 #     --force-color
