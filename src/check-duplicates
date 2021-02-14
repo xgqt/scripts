@@ -25,6 +25,8 @@
 #   Distributed under the terms of the GNU General Public License v2
 # This one upgrades the license to GNU General Public License v3
 
+# shellcheck disable=1117
+
 
 trap 'exit 128' INT
 export PATH
