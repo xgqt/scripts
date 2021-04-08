@@ -25,21 +25,53 @@ set -e
 export PATH
 
 
-pdir="$(git rev-parse --show-prefix)"
-
-
 FEATURES="sign"
 export FEATURES
 
 
+package_directory="$(git rev-parse --show-prefix)"
+package="${package_directory%/}"
+
+
+error_no_version() {
+    echo "[ERROR]: No version given"
+    echo "         Ran with option: ${1}"
+    exit 1
+}
+
+
 git add .
 
-if [ -z "${1}" ]
-then
-    repoman commit
-else
-    repoman commit -m "${pdir%/}: ${*}"
-fi
-
-git pull --verbose
-git push --verbose
+case "${1}"
+in
+    "" )
+        echo "[DEBUG]: no additional arguments/options given"
+        repoman commit
+        ;;
+    -b | --bump )
+        echo "[DEBUG]: to be: ${package}: bump to ${2}"
+        if [ -n "${2}" ]
+        then
+            repoman commit -m "${package}: bump to ${2}"
+        else
+            error_no_version "${1}"
+        fi
+        ;;
+    -d | --drop )
+        echo "[DEBUG]: to be: ${package}: drop old ${2}"
+        if [ -n "${2}" ]
+        then
+            repoman commit -m "${package}: drop old ${2}"
+        else
+            error_no_version "${1}"
+        fi
+        ;;
+    -* )
+        echo "[ERROR]: Unknown option ${1}"
+        exit 1
+        ;;
+    * )
+        echo "[DEBUG]: to be: ${package}: ${*}"
+        repoman commit -m "${package}: ${*}"
+        ;;
+esac
