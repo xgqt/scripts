@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with scripts.  If not, see <https://www.gnu.org/licenses/>.
 
 Original author: Maciej Barć (xgqt@protonmail.com)
-Copyright (c) 2020, src_prepare group
+Copyright (c) 2020-2021, src_prepare group
 Licensed under the GNU GPL v3 License
 
 Install Ebuild Dependencies
@@ -29,12 +29,13 @@ to emerge dependencies we would just do "emerge --oneshot --onlydeps PKG".
 
 
 import argparse
+import sys
 from subprocess import call
 
 
 parser = argparse.ArgumentParser(
     description="Install Ebuild Dependencies",
-    epilog="Copyright (c) 2020, src_prepare group (License: ISC)"
+    epilog="Copyright (c) 2020-2021, src_prepare group (License: GPLv3)"
 )
 parser.add_argument(
     "ebuild",
@@ -45,16 +46,14 @@ args = parser.parse_args()
 
 
 def pkg_name(pkg_str):
-    """Parse string and return a pkg name"""
+    """
+    Parse string and return a pkg name.
+    """
 
     # TODO: don't strip but force
 
-    proper = ""
-
     # Strip required use
-    for i in ["["]:
-        if i in pkg_str:
-            proper = pkg_str.split(i)[0]
+    proper = pkg_str.split("[")[0]
 
     # Strip conditional use
     for i in ["$", "DEPEND", "||", "!", "?", "(", ")"]:
@@ -65,12 +64,21 @@ def pkg_name(pkg_str):
 
 
 def ebuild_deps(ebuild_file):
-    """Returns dependencies from a ebuild file"""
+    """
+    Returns dependencies from a ebuild file.
+    """
+
     deps = []
     adddeps = False
+
     with open(ebuild_file) as ebuild:
         for line in ebuild.read().splitlines():
-            if adddeps:
+
+            # TODO: Find a better way to find the depend "block"
+            if "DEPEND" in line:
+                adddeps = True
+
+            elif adddeps:
                 # TODO: Find a better pkg match method
                 if "/" in line:
                     deps.append(
@@ -78,15 +86,19 @@ def ebuild_deps(ebuild_file):
                     )
                 elif "\"" in line:
                     adddeps = False
-            # TODO: Find a better way to find the depend "block"
-            elif "DEPEND" in line:
-                adddeps = True
+
     return deps
 
 
 def main():
-    """The main function"""
+    """
+    The main function.
+    """
     print("Ebuilds:", args.ebuild)
+
+    if args.ebuild == []:
+        print("[ERROR]: No ebuilds given")
+        sys.exit(1)
 
     all_deps = []
 
