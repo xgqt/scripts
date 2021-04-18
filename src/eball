@@ -29,9 +29,9 @@ usage() {
 Usage: eball FILES
 eball - test new ebuilds
 
-Original author: XGQT
-Copyright (c) 2020, src_prepare group
-Licensed under the ISC License
+Original author: Maciej Barć
+Copyright (c) 2020-2021, src_prepare group
+Licensed under the GPLv3
 HELP
 }
 
