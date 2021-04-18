@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with scripts.  If not, see <https://www.gnu.org/licenses/>.
 
-# Original author: Maciej Barć (xgqt@protonmail.com)
+# Original author: Maciej Barć <xgqt@riseup.net>
 # Copyright (c) 2020, src_prepare group
 # Licensed under the GNU GPL v3 License
 
