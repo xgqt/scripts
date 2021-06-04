@@ -13,19 +13,22 @@
 # along with scripts.  If not, see <https://www.gnu.org/licenses/>.
 
 # Original author: Maciej Barć <xgqt@riseup.net>
-# Copyright (c) 2020, src_prepare group
+# Copyright (c) 2020-2021, src_prepare group
 # Licensed under the GNU GPL v3 License
 
 
-image: debian:stable-slim
+image: dyne/devuan:ceres
+
 
 stages:
   - test
 
+
 before_script:
-  - apt-get update
+  - apt update
   - apt-get install -y bash pylint3 shellcheck
   - ln -fs $(which pylint3) /usr/bin/pylint
+
 
 test:
   stage: test
