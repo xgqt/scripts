@@ -69,8 +69,12 @@ do
         done
 
         # Output info with colors.
-        echo -e "\e[1;33m${PACKAGE}\e[0m"
-        echo -e "  \e[1;35mPortage:\e[0m${PORTPACK_VERS}"
-        echo -e "  \e[1;35mOverlay:\e[0m${OVERPACK_VERS}"
+        purple=$'\e[1;35m'
+        esc=$'\e[0m'
+
+        printf "%s\n" \
+            "${purple}${PACKAGE}${esc}" \
+            "  ${purple}Portage:${esc}${PORTPACK_VERS}" \
+            "  ${purple}Overlay:${esc}${OVERPACK_VERS}"
     fi
 done

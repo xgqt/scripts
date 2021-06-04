@@ -26,4 +26,4 @@ trap 'exit 128' INT
 cd "${1:-$(pwd)}" || exit 1
 
 path="$(git rev-parse --show-prefix)"
-echo "${path%/}"
+printf "%s\n" "${path%/}"

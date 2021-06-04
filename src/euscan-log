@@ -31,9 +31,10 @@ export PATH
 
 if [ -z "${1}" ]
 then
-    echo "No overlay names given"
-    echo "Please give at least one overlay name as a commandline argument"
-    echo "Exiting"
+    printf "%s\n" \
+        "No overlay names given" \
+        "Please give at least one overlay name as a commandline argument" \
+        "Exiting" >> /dev/stderr
     exit 1
 fi
 
@@ -43,5 +44,5 @@ do
     do 
         euscan --nocolor --quiet "${ebuild}" | tee -a "euscan-${overlay}.log"
     done
-    echo ">>> Done scanning ${overlay}"
+    printf "%s\n" ">>> Done scanning ${overlay}"
 done

@@ -58,7 +58,7 @@ eprefix_addpath() {
         PATH=${1}:${PATH}
         export PATH
     else
-        echo "${eprefix_warn} ${1} not found"
+        printf "%s\n" "${eprefix_warn} ${1} not found" >> /dev/stderr
     fi
 }
 
@@ -68,7 +68,7 @@ eprefix_addman() {
         MANPATH=${1}:${MANPATH}
         export MANPATH
     else
-        echo "${eprefix_warn} ${1} not found"
+        printf "%s\n" "${eprefix_warn} ${1} not found" >> /dev/stderr
     fi
 }
 
@@ -95,9 +95,10 @@ case ${-} in
         :
         ;;
     * )
-        echo "${eprefix_bad} Error: not a login shell"
-        echo "${eprefix_bad} Run: source ${0}"
-        echo ">>> Exiting the shell"
+        printf "%s\n" \
+            "${eprefix_bad} Error: not a login shell" \
+            "${eprefix_bad} Run: source ${0}" \
+            ">>> Exiting the shell" >> /dev/stderr
         exit 1
         ;;
 esac
@@ -105,8 +106,9 @@ esac
 # Exit if eprefix does not exist
 if [ ! -d "${EPREFIX}" ]
 then
-    echo "${eprefix_bad} No ${EPREFIX} found!"
-    echo ">>> Exiting the shell"
+    printf "%s\n" \
+        "${eprefix_bad} No ${EPREFIX} found!" \
+        ">>> Exiting the shell" >> /dev/stderr
     sleep 3
     exit 1
 fi
@@ -178,44 +180,42 @@ FEATURES="${FEATURES} -usersandbox -sandbox"
 export FEATURES
 
 # Check if we are on a prefix profile
-echo ""
+printf "\n"
 if command_exists eselect
 then
     eprofile="$(eselect profile show)"
 
     if [[ "${eprofile}" == *prefix* ]]
     then
-        echo "${eprefix_good} ${eprofile}"
+        printf "%s\n" "${eprefix_good} ${eprofile}"
     else
-        echo "${eprefix_bad} You are not on a prefix profile"
+        printf "%s\n" "${eprefix_bad} You are not on a prefix profile" >> /dev/stderr
     fi
 
     unset eprofile
 else
-    echo "${eprefix_bad} Could not determine running profile"
+    printf "%s\n" "${eprefix_bad} Could not determine running profile" >> /dev/stderr
 fi
 
 
 # >>> Finish
 
-echo ""
-echo ">>> Sourced the eprefix script"
-echo ""
-echo "${eprefix_good} Prefix:    ${EPREFIX}"
-echo "${eprefix_good} Packages:  $(eprefix_packages)"
-echo "${eprefix_good} In World:  $(eprefix_world)"
-echo "${eprefix_good} Have fun!  ;-)"
+printf "\n%s\n" \
+    ">>> Sourced the eprefix script\n" \
+    "${eprefix_good} Prefix:    ${EPREFIX}" \
+    "${eprefix_good} Packages:  $(eprefix_packages)" \
+    "${eprefix_good} In World:  $(eprefix_world)" \
+    "${eprefix_good} Have fun!  ;-)"
 
 
 if command_exists emerge
 then
-    echo ""
-    echo ">>> Environment ready"
+    printf "\n%s\n" ">>> Environment ready"
 else
-    echo ""
-    echo "${eprefix_bad} Could not locate emerge"
-    echo "${eprefix_bad} Environment may be broken"
-    echo ">>> Continuing anyway..."
+    printf "\n%s\n" \
+        "${eprefix_bad} Could not locate emerge" \
+        "${eprefix_bad} Environment may be broken" \
+        ">>> Continuing anyway..." >> /dev/stderr
 fi
 
 

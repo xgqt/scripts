@@ -48,12 +48,13 @@ ignored_dirs=(
 # This will likely exit firh error, because repoman
 # has to download some files (metadata.xsd)
 # We do that so we can truthfully test the actual latest commit
-echo ">>> Starting full test"
-echo "Running repoman -Idix"
+printf "%s\n" \
+    ">>> Starting full test" \
+    "Running repoman -Idix"
 repoman -Idix
 
 
-echo ">>> Starting latest commit test"
+printf "%s\n" ">>> Starting latest commit test"
 
 # If any of the QA checks fail the test will fail
 test_success=true
@@ -70,17 +71,16 @@ do
     do
         if [[ "${commit_dir}" = *"${i_dir}"* ]]
         then
-            echo
-            echo "Ignoring ${commit_dir}"
+            printf "\n%s\n" "Ignoring ${commit_dir}"
             continue 2
         fi
     done
 
     if cd "${commit_dir}"
     then
-        echo
-        echo "Checking ${commit_dir}"
-        echo "Running repoman -Idix"
+        printf "\n%s\n" \
+        "Checking ${commit_dir}" \
+        "Running repoman -Idix"
         repoman -Idix || test_success="false"
         cd - >/dev/null || return
     fi
@@ -88,9 +88,9 @@ done
 
 if [ "${test_success}" = "false" ]
 then
-    echo ">>> Exiting with failure due to previous errors"
+    printf "%s\n" ">>> Exiting with failure due to previous errors" >> /dev/stderr
     exit 1
 else
-    echo ">>> Exiting successfully"
+    printf "%s\n" ">>> Exiting successfully"
     exit 0
 fi

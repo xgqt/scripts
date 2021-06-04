@@ -30,16 +30,15 @@ exit_result=0
 run_test() {
     for file in ${2}
     do
-        echo "File ${file}... checking"
+        printf "%s\n" "File ${file}... checking"
         if command "${1}" "${file}"
         then
-            echo "    file is correct"
+            printf "%s\n" "    file is correct"
         else
-            echo "    there were errors found in the file"
+            printf "%s\n" "    there were errors found in the file" >> /dev/stderr
             exit_result=1
         fi
-        echo "Done: ${file}"
-        echo
+        printf "%s\n\n" "Done: ${file}"
     done
 }
 
@@ -52,11 +51,9 @@ run_test pylint "${py_files}"
 
 if [ ${exit_result} = 0 ]
 then
-    echo "No errors reported"
-    echo "Exiting successfully"
+    printf "%s\n" "No errors reported" "Exiting successfully"
     exit ${exit_result}
 else
-    echo "Some errors reported"
-    echo "Exiting without success"
+    printf "%s\n" "Some errors reported" "Exiting without success" >> /dev/stderr
     exit ${exit_result}
 fi

@@ -54,7 +54,7 @@ do
     # we want this to be privileged on Gentoo systems
     if [ "$(whoami)" != root ] && [ -z "${EPREFIX}" ]
     then
-        echo "Switching to the root account"
+        printf "%s\n" "Switching to the root account"
         su root -c "ebuild ${ebuild} clean test merge"
     else
         ebuild "${ebuild}" clean test merge

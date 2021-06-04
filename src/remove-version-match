@@ -24,7 +24,7 @@
 
 
 if [ -z "$1" ]; then
-	echo "Must specify a file to modify..."
+	printf "%s\n" "Must specify a file to modify..."
 	exit 1
 fi
 regex='^=?(\S+)(?:-[[:digit:]]+\S*)(\s)(\S+)$'

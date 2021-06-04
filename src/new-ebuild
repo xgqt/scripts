@@ -74,15 +74,15 @@ main() {
     ebuild="$(basename "$(pwd)")-9999.ebuild"
     if [ ! -f "${ebuild}" ]
     then
-        echo "${ebuild_template}" > "${ebuild}"
+        printf "%s\n" "${ebuild_template}" > "${ebuild}"
     else
-        echo "Already exists: ${ebuild}"
+        printf "%s\n" "Already exists: ${ebuild}" >> /dev/stderr
     fi
     if [ ! -f "metadata.xml" ]
     then
-        echo "${metadata_template}" > "metadata.xml"
+        printf "%s\n" "${metadata_template}" > "metadata.xml"
     else
-        echo "Already exists: metadata.xml"
+        printf "%s\n" "Already exists: metadata.xml" >> /dev/stderr
     fi
 }
 
@@ -91,10 +91,11 @@ if [ -f ../../profiles/repo_name ]
 then
     main
 else
-    echo "Are you in a overlay repo?"
-    echo "To use this script successfully:"
-    echo "1. Create a \${CATEGOTY}/\${PN} directory"
-    echo "2. Change directory to it"
-    echo "3. Execute ${0}"
+    printf "%s\n" \
+        "Are you in a overlay repo?" \
+        "To use this script successfully:" \
+        "1. Create a \${CATEGOTY}/\${PN} directory" \
+        "2. Change directory to it" \
+        "3. Execute ${0}" >> /dev/stderr
     exit 1
 fi

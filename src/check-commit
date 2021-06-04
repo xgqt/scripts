@@ -27,7 +27,7 @@
 
 # Check if we are in a git repo
 if ! git status >/dev/null; then
-    echo "Not a git repo... exiting"
+    printf "%s\n" "Not a git repo... exiting" >> /dev/stderr
     exit 1
 fi
 
@@ -46,19 +46,20 @@ fi
 # This will likely exit firh error, because repoman
 # has to download some files (metadata.xsd)
 # We do that so we can truthfully test the actual latest commit
-echo ">>> Starting full test"
-echo "Running repoman -Idix"
+printf "%s\n" \
+    ">>> Starting full test" \
+    "Running repoman -Idix"
 repoman -Idix
-echo "Running pkgcheck scan"
+printf "%s\n" "Running pkgcheck scan"
 pkgcheck scan
 
 
-echo ">>> Starting latest commit test"
+printf "%s\n" ">>> Starting latest commit test"
 
 test_success=true
 
 # Use pkgchek
-echo "Running pkgcheck scan --commits"
+printf "%s\n" "Running pkgcheck scan --commits"
 pkgcheck scan --commits || test_success=false
 
 # Iterate through changed files in last commit
@@ -78,9 +79,9 @@ do
 
     if cd "${commit_dir}"
     then
-        echo
-        echo "Directory $(pwd):"
-        echo "Running repoman -Idix"
+        printf "\n%s\n" \
+            "Directory $(pwd):" \
+            "Running repoman -Idix"
         repoman -Idix || test_success=false
         cd - >/dev/null || return
     fi
@@ -89,7 +90,7 @@ done
 # If any of the QA tools fail the test will fail
 if [ ${test_success} = false ]
 then
-    echo ">>> Exiting with failure due to previous errors..."
+    printf "%s\n" ">>> Exiting with failure due to previous errors..." >> /dev/stderr
     exit 1
 else
     exit 0

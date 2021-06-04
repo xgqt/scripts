@@ -34,8 +34,9 @@ package="${package_directory%/}"
 
 
 error_no_version() {
-    echo "[ERROR]: No version given"
-    echo "         Ran with option: ${1}"
+    printf "%s\n" \
+        "[ERROR]: No version given" \
+        "         Ran with option: ${1}" >> /dev/stderr
     exit 1
 }
 
@@ -45,11 +46,11 @@ git add .
 case "${1}"
 in
     "" )
-        echo "[DEBUG]: no additional arguments/options given"
+        printf "%s\n" "[DEBUG]: no additional arguments/options given" >> /dev/stderr
         repoman commit
         ;;
     -b | --bump )
-        echo "[DEBUG]: to be: ${package}: bump to ${2}"
+        printf "%s\n" "[DEBUG]: to be: ${package}: bump to ${2}"
         if [ -n "${2}" ]
         then
             repoman commit -m "${package}: bump to ${2}"
@@ -58,7 +59,7 @@ in
         fi
         ;;
     -d | --drop )
-        echo "[DEBUG]: to be: ${package}: drop old ${2}"
+        printf "%s\n" "[DEBUG]: to be: ${package}: drop old ${2}"
         if [ -n "${2}" ]
         then
             repoman commit -m "${package}: drop old ${2}"
@@ -67,11 +68,11 @@ in
         fi
         ;;
     -* )
-        echo "[ERROR]: Unknown option ${1}"
+        printf "%s\n" "[ERROR]: Unknown option ${1}" >> /dev/stderr
         exit 1
         ;;
     * )
-        echo "[DEBUG]: to be: ${package}: ${*}"
+        printf "%s\n" "[DEBUG]: to be: ${package}: ${*}"
         repoman commit -m "${package}: ${*}"
         ;;
 esac

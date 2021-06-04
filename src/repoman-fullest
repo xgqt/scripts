@@ -36,12 +36,13 @@ main() {
 case ${1}
 in
     -h | -help | --help )
-        echo "Usage: ${0}"
-        echo "Performed in this script:"
-        echo "1. remove Manifest file"
-        echo "2. regen Manifest with 'repoman manifest'"
-        echo "3. Check with 'repoman -Idx full'"
-        echo "4. Check with 'pkgcheck scan'"
+        printf "%s\n" \
+            "Usage: ${0}" \
+            "Performed in this script:" \
+            "1. remove Manifest file" \
+            "2. regen Manifest with 'repoman manifest'" \
+            "3. Check with 'repoman -Idx full'" \
+            "4. Check with 'pkgcheck scan'"
         ;;
     * )
         main

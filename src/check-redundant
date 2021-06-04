@@ -46,11 +46,12 @@ reset="$(tput sgr0)"
 
 
 ok_msg() {
-   echo "${bold}${green}* ${white}${1}${reset}"
+   printf "%s\n" "${bold}${green}* ${white}${1}${reset}"
 }
 
 err_msg() {
-    echo "${bold}${red}* ${white}${1}${reset}"
+    # redirect error messages to standard error stream
+    printf "%s\n" "${bold}${red}* ${white}${1}${reset}" >> /dev/stderr
 }
 
 usage() {
@@ -103,7 +104,7 @@ do
     if [ "${known_unique#*${pkg}}" = "${known_unique}" ]
     then
         nnuniq=$((nnuniq + 1))
-        echo
+        printf "\n"
         ok_msg "Package ${nnuniq} ${pkg}:"
         use_eix --exact --force-color "${pkg}"
     fi
