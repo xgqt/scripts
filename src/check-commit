@@ -49,7 +49,7 @@ fi
 printf "%s\n" \
     ">>> Starting full test" \
     "Running repoman -Idix"
-repoman -Idix
+repoman --verbose -Idix
 printf "%s\n" "Running pkgcheck scan"
 pkgcheck scan
 
@@ -82,7 +82,7 @@ do
         printf "\n%s\n" \
             "Directory $(pwd):" \
             "Running repoman -Idix"
-        repoman -Idix || test_success=false
+        repoman --verbose -Idix || test_success=false
         cd - >/dev/null || return
     fi
 done

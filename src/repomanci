@@ -51,7 +51,7 @@ ignored_dirs=(
 printf "%s\n" \
     ">>> Starting full test" \
     "Running repoman -Idix"
-repoman -Idix
+repoman --verbose -Idix
 
 
 printf "%s\n" ">>> Starting latest commit test"
@@ -81,7 +81,7 @@ do
         printf "\n%s\n" \
         "Checking ${commit_dir}" \
         "Running repoman -Idix"
-        repoman -Idix || test_success="false"
+        repoman --verbose -Idix || test_success="false"
         cd - >/dev/null || return
     fi
 done
