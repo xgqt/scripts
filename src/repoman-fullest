@@ -16,7 +16,7 @@
 # along with scripts.  If not, see <https://www.gnu.org/licenses/>.
 
 # Original author: Maciej Barć <xgqt@riseup.net>
-# Copyright (c) 2020, src_prepare group
+# Copyright (c) 2020-2021, src_prepare group
 # Licensed under the GNU GPL v3 License
 
 
@@ -26,7 +26,7 @@ export PATH
 
 main() {
     [ -f Manifest ] && rm -v Manifest
-    repoman --verbose manifest
+    GENTOO_MIRRORS="" repoman --verbose manifest
 
     repoman --verbose -Idx full
     pkgcheck --verbose scan

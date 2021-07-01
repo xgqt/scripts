@@ -16,7 +16,7 @@
 # along with scripts.  If not, see <https://www.gnu.org/licenses/>.
 
 # Original author: Maciej Barć <xgqt@riseup.net>
-# Copyright (c) 2020, src_prepare group
+# Copyright (c) 2020-2021, src_prepare group
 # Licensed under the GNU GPL v3 License
 
 
@@ -49,7 +49,7 @@ fi
 for ebuild in "${@}"
 do
     # one may want this to be unprivileged
-    repoman manifest || ebuild "${ebuild}" manifest
+    GENTOO_MIRRORS="" repoman manifest || ebuild "${ebuild}" manifest
 
     # we want this to be privileged on Gentoo systems
     if [ "$(whoami)" != root ] && [ -z "${EPREFIX}" ]
