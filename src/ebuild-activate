@@ -1,0 +1,72 @@
+#!/bin/sh
+
+
+# This file is part of scripts.
+
+# scripts is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+
+# scripts is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with scripts.  If not, see <https://www.gnu.org/licenses/>.
+
+# Original author: Maciej Barć <xgqt@riseup.net>
+# Copyright (c) 2021, src_prepare group
+# Licensed under the GNU GPL v3 License
+
+
+# Exit if script is not sourced
+case ${-}
+in
+    *i* )
+        :
+        ;;
+    * )
+        printf "%s\n" "Run: source ${0}"  \
+               ">>> Exiting the shell"  \
+               >> /dev/stderr
+        exit 1
+        ;;
+esac
+
+
+# Set variables for ebuild development
+
+_toplevel="$(git rev-parse --show-toplevel || echo '/dev/null')"
+
+ACCEPT_LICENSE='*'
+export ACCEPT_LICENSE
+
+if type lz4 >/dev/null
+then
+    BINPKG_COMPRESS='lz4'
+    export BINPKG_COMPRESS
+fi
+
+if mkdir -p /tmp/distdir
+then
+    DISTDIR='/tmp/distdir'
+    export DISTDIR
+fi
+
+GENTOO_MIRRORS=''
+export GENTOO_MIRRORS
+
+INSTALL_MASK=''
+export INSTALL_MASK
+
+if [ -e "${_toplevel}/profiles/repo_name" ]
+then
+   PORTDIR="${_toplevel}"
+   export PORTDIR
+fi
+
+PS1="[e] ${PS1}"
+
+
+echo ">>> Entering Ebuild development environment"
