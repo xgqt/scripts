@@ -21,6 +21,7 @@
 
 
 # Exit if script is not sourced
+
 case ${-}
 in
     *i* )
@@ -35,10 +36,27 @@ in
 esac
 
 
-# Set variables for ebuild development
+# Internal
 
+_timest="$(date +%Y-%m-%d_%H:%M:%S || echo 'null')"
 _tmpdir='/tmp/edev'
 _toplevel="$(git rev-parse --show-toplevel || echo '/dev/null')"
+
+
+# Mark time when user entered environment for given repository
+
+if mkdir -p "${_tmpdir}"
+then
+    if cd "${_tmpdir}"
+    then
+        ln -fs "${_toplevel}" "${_timest}"
+        cd - ||
+            echo 'Bug?'
+    fi
+fi
+
+
+# Set variables for ebuild development
 
 ACCEPT_LICENSE='*'
 export ACCEPT_LICENSE
@@ -73,20 +91,29 @@ fi
 
 if [ -e "${_toplevel}/profiles/repo_name" ]
 then
-   PORTDIR="${_toplevel}"
-   export PORTDIR
+    PORTDIR="${_toplevel}"
+    export PORTDIR
 fi
 
 PS1="(ebuild) ${PS1}"
 
 
+# Some helpful aliases
+
 alias cd-edev='cd ${_tmpdir}'
 alias cd-repo='cd ${_toplevel}'
+alias cd-dist='cd ${DISTDIR}'
+alias cd-elog='cd ${PORTAGE_LOGDIR}'
 
 alias clean-edev='rm -r ${_tmpdir}'
+alias clean-dist='rm -r ${DISTDIR}'
+alias clean-elog='rm -r ${PORTAGE_LOGDIR}'
 
+alias ls-edev='ls -ahl ${_tmpdir}'
+alias ls-repo='ls -ahl ${_toplevel}'
 alias ls-dist='ls -ahl ${DISTDIR}'
 alias ls-elog='ls -ahl ${PORTAGE_LOGDIR}'
 
 
+clear
 echo ">>> Entering Ebuild development environment"
