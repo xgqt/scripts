@@ -37,6 +37,7 @@ esac
 
 # Set variables for ebuild development
 
+_tmpdir='/tmp/edev'
 _toplevel="$(git rev-parse --show-toplevel || echo '/dev/null')"
 
 ACCEPT_LICENSE='*'
@@ -48,9 +49,9 @@ then
     export BINPKG_COMPRESS
 fi
 
-if mkdir -p /tmp/distdir
+if mkdir -p "${_tmpdir}/dist"
 then
-    DISTDIR='/tmp/distdir'
+    DISTDIR="${_tmpdir}/dist"
     export DISTDIR
 fi
 
@@ -60,6 +61,16 @@ export GENTOO_MIRRORS
 INSTALL_MASK=''
 export INSTALL_MASK
 
+if mkdir -p "${_tmpdir}/elog"
+then
+    PORTAGE_ELOG_CLASSES='warn error log'
+    export PORTAGE_ELOG_CLASSES
+    PORTAGE_ELOG_SYSTEM='save'
+    export PORTAGE_ELOG_SYSTEM
+    PORTAGE_LOGDIR="${_tmpdir}/elog"
+    export PORTAGE_LOGDIR
+fi
+
 if [ -e "${_toplevel}/profiles/repo_name" ]
 then
    PORTDIR="${_toplevel}"
@@ -67,6 +78,15 @@ then
 fi
 
 PS1="(ebuild) ${PS1}"
+
+
+alias cd-edev='cd ${_tmpdir}'
+alias cd-repo='cd ${_toplevel}'
+
+alias clean-edev='rm -r ${_tmpdir}'
+
+alias ls-dist='ls -ahl ${DISTDIR}'
+alias ls-elog='ls -ahl ${PORTAGE_LOGDIR}'
 
 
 echo ">>> Entering Ebuild development environment"
