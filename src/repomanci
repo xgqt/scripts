@@ -29,13 +29,16 @@
 ignored_dirs=(
     .
     .git
+    3rd_party
+    doc
     eclass
     files
     licenses
     metadata
     profiles
+    public
+    scribblings
     scripts
-    3rd_party
 )
 
 
